@@ -1,5 +1,5 @@
 ﻿//------------------------------------------------------------------------------
-// <copyright file="TileGeneratorCommand.cs" company="Company">
+// <copyright file="Command1.cs" company="Company">
 //     Copyright (c) Company.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
@@ -10,39 +10,22 @@ using System.Globalization;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
-namespace Famoser.UWPTileGeneratorRevised
+namespace Extenso
 {
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class TileGeneratorCommand
+    internal sealed class Command1
     {
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int GenerateTileImagesCommandId = 0x0100;
-
-        /// <summary>
-        /// Command ID.
-        /// </summary>
-        public const int GenerateStoreLogoCommandId = 0x0200;
-
-        /// <summary>
-        /// Command ID.
-        /// </summary>
-        public const int GenerateSplashImagesCommandId = 0x300;
-
-        /// <summary>
-        /// Command ID.
-        /// </summary>
-        public const int EmptyCommandId = 0x300;
-
-        
+        public const int CommandId = 0x0100;
 
         /// <summary>
         /// Command menu group (command set GUID).
         /// </summary>
-        public static readonly Guid CommandSet = new Guid("145c5f09-ce3c-43f7-9948-18f1ba65f860");
+        public static readonly Guid CommandSet = new Guid("9b54bfa2-9fba-4f84-a970-2fb5459c5474");
 
         /// <summary>
         /// VS Package that provides this command, not null.
@@ -50,34 +33,11 @@ namespace Famoser.UWPTileGeneratorRevised
         private readonly Package package;
 
         /// <summary>
-        /// Gets the instance of the command.
-        /// </summary>
-        public static TileGeneratorCommand Instance
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Gets the service provider from the owner package.
-        /// </summary>
-        private IServiceProvider ServiceProvider => package;
-
-        /// <summary>
-        /// Initializes the singleton instance of the command.
-        /// </summary>
-        /// <param name="package">Owner package, not null.</param>
-        public static void Initialize(Package package)
-        {
-            Instance = new TileGeneratorCommand(package);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TileGeneratorCommand"/> class.
+        /// Initializes a new instance of the <see cref="Command1"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        private TileGeneratorCommand(Package package)
+        private Command1(Package package)
         {
             if (package == null)
             {
@@ -89,22 +49,39 @@ namespace Famoser.UWPTileGeneratorRevised
             OleMenuCommandService commandService = this.ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if (commandService != null)
             {
-                var menuCommandID = new CommandID(CommandSet, GenerateTileImagesCommandId);
+                var menuCommandID = new CommandID(CommandSet, CommandId);
                 var menuItem = new MenuCommand(this.MenuItemCallback, menuCommandID);
                 commandService.AddCommand(menuItem);
-
-                menuCommandID = new CommandID(CommandSet, GenerateSplashImagesCommandId);
-                menuItem = new MenuCommand(this.MenuItemCallback, menuCommandID);
-                commandService.AddCommand(menuItem);
-
-                menuCommandID = new CommandID(CommandSet, GenerateStoreLogoCommandId);
-                menuItem = new MenuCommand(this.MenuItemCallback, menuCommandID);
-                commandService.AddCommand(menuItem);
-
-                menuCommandID = new CommandID(CommandSet, EmptyCommandId);
-                menuItem = new MenuCommand((sender, args) => { }, menuCommandID);
-                commandService.AddCommand(menuItem);
             }
+        }
+
+        /// <summary>
+        /// Gets the instance of the command.
+        /// </summary>
+        public static Command1 Instance
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the service provider from the owner package.
+        /// </summary>
+        private IServiceProvider ServiceProvider
+        {
+            get
+            {
+                return this.package;
+            }
+        }
+
+        /// <summary>
+        /// Initializes the singleton instance of the command.
+        /// </summary>
+        /// <param name="package">Owner package, not null.</param>
+        public static void Initialize(Package package)
+        {
+            Instance = new Command1(package);
         }
 
         /// <summary>
@@ -117,7 +94,7 @@ namespace Famoser.UWPTileGeneratorRevised
         private void MenuItemCallback(object sender, EventArgs e)
         {
             string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
-            string title = "TileGeneratorCommand";
+            string title = "Command1";
 
             // Show a message box to prove we were here
             VsShellUtilities.ShowMessageBox(

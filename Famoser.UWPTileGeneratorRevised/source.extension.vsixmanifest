@@ -3,8 +3,8 @@
   <Metadata>
     <Identity Id="Famoser.UWPTileGeneratorRevised.Florian Moser.6127b1e4-478f-43f3-a3d7-0ea02233b44e" Version="1.0" Language="en-US" Publisher="Florian Moser" />
     <DisplayName>Famoser.UWPTileGeneratorRevised</DisplayName>
-    <Description xml:space="preserve">samle descrsamle descr</D
-    <Tags>uwp, tile, splash, generate, generation, generator, windows 10</Tags>escription>
+    <Description xml:space="preserve">Generate UWP tiles &amp; splash screens. </Description>
+    <Tags>uwp, tile, splash, generate, generation, generator, windows 10</Tags>
   </Metadata>
   <Installation>
     <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[14.0]" />
