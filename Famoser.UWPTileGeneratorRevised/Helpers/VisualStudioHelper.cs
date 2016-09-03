@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using EnvDTE;
 using EnvDTE80;
@@ -13,15 +14,45 @@ using Microsoft.VisualStudio.Shell;
 
 namespace Famoser.UWPTileGeneratorRevised.Helpers
 {
-    internal class VisualStudioHelper
+    internal class VisualStudioHelper : IDisposable
     {
         private readonly string _packageManifestPath;
-        private readonly string _relativeFilePath;
-        public VisualStudioHelper(string relativeFilePath, DTE2 dte2Service)
-        {
-            _relativeFilePath = relativeFilePath;
+        private readonly string _packageManifestFolder;
+        private readonly string _selectedFilePath;
+        private readonly Project _project;
+        private readonly UIHierarchyItem _selectedFile;
+        private readonly DTE2 _dte2Service;
 
-            _packageManifestPath = GetPackageManifestPath(dte2Service);
+        public VisualStudioHelper(DTE2 dte2Service)
+        {
+            _dte2Service = dte2Service;
+            Cursor.Current = Cursors.WaitCursor;
+
+            _selectedFile = ResolveSelectedItem();
+            _selectedFilePath = ResolveSelectedFilePath();
+            _project = ResolveContainingProject();
+            _packageManifestPath = GetPackageManifestPath();
+            _packageManifestFolder = _packageManifestPath.Substring(0, _packageManifestPath.LastIndexOf("\\", StringComparison.Ordinal));
+        }
+
+        private string ResolveSelectedFilePath()
+        {
+            var projItem = GetSelectedItem().Object as ProjectItem;
+            return projItem?.Properties.Item("FullPath").Value.ToString();
+        }
+
+        private UIHierarchyItem ResolveSelectedItem()
+        {
+            var hierarchy = _dte2Service.ToolWindows.SolutionExplorer;
+            var selectedItems = hierarchy.SelectedItems as IEnumerable<UIHierarchyItem>;
+            return selectedItems?.FirstOrDefault();
+        }
+
+        private Project ResolveContainingProject()
+        {
+            var item = GetSelectedItem();
+            var proj = item.Object as ProjectItem;
+            return proj?.ContainingProject;
         }
 
         private string GetSolutionFileName(Tile tile)
@@ -29,9 +60,18 @@ namespace Famoser.UWPTileGeneratorRevised.Helpers
             return tile.BaseFileName + ".png";
         }
 
-        private string GetSolutionPath(Tile tile)
+        private string GetPathForPackageManifest(Tile tile)
         {
-            return _relativeFilePath + GetSolutionFileName(tile);
+            var filePath = GetSelectedItemPath();
+            var fileFolder = filePath.Substring(0, filePath.LastIndexOf("\\", StringComparison.Ordinal));
+            var relativePath = fileFolder.Replace(_packageManifestFolder, "").Substring(1);
+            return relativePath + "\\" + GetSolutionFileName(tile);
+        }
+
+        private string GetPathForProjectFile(string absolutePath)
+        {
+            var folderPath = _project.FullName.Substring(_project.FullName.LastIndexOf("\\", StringComparison.Ordinal));
+            return absolutePath.Replace(folderPath, "");
         }
 
         public void AddTileToPackage(Tile tile)
@@ -44,7 +84,7 @@ namespace Famoser.UWPTileGeneratorRevised.Helpers
             {
                 //add logo
                 var logo = xdocument.Descendants(XName.Get(tile.XmlName, defaultNamespace)).First();
-                logo.Value = GetSolutionPath(tile);
+                logo.Value = GetPathForPackageManifest(tile);
             }
 
             var visualElemment = xdocument.Descendants(XName.Get("VisualElements", xmlNamespace)).FirstOrDefault();
@@ -52,7 +92,7 @@ namespace Famoser.UWPTileGeneratorRevised.Helpers
             {
                 if (tile.TileSize == TileSize.AppList || tile.TileSize == TileSize.Medium)
                 {
-                    visualElemment.SetAttributeValue(tile.XmlName, GetSolutionPath(tile));
+                    visualElemment.SetAttributeValue(tile.XmlName, GetPathForPackageManifest(tile));
                 }
 
                 if (tile.TileSize == TileSize.Splash)
@@ -64,7 +104,7 @@ namespace Famoser.UWPTileGeneratorRevised.Helpers
                         splashScreen = xdocument.Descendants(XName.Get("SplashScreen", xmlNamespace)).FirstOrDefault();
                     }
 
-                    splashScreen?.SetAttributeValue(tile.XmlName, GetSolutionPath(tile));
+                    splashScreen?.SetAttributeValue("Image", GetPathForPackageManifest(tile));
                 }
 
                 if (tile.TileSize == TileSize.Small || tile.TileSize == TileSize.Wide || tile.TileSize == TileSize.Large)
@@ -76,7 +116,7 @@ namespace Famoser.UWPTileGeneratorRevised.Helpers
                         defaultTitle = xdocument.Descendants(XName.Get("DefaultTile", xmlNamespace)).FirstOrDefault();
                     }
 
-                    defaultTitle?.SetAttributeValue(tile.XmlName, GetSolutionPath(tile));
+                    defaultTitle?.SetAttributeValue(tile.XmlName, GetPathForPackageManifest(tile));
                 }
             }
 
@@ -84,27 +124,55 @@ namespace Famoser.UWPTileGeneratorRevised.Helpers
             xdocument.Save(_packageManifestPath);
         }
 
+        public void AddFileToProject(string savePath)
+        {
+            _project.ProjectItems.AddFromFile(GetPathForProjectFile(savePath));
+        }
+
+        private UIHierarchyItem GetSelectedItem()
+        {
+            return _selectedFile;
+        }
+
+        public string GetSelectedItemPath()
+        {
+            return _selectedFilePath;
+        }
+
         /// <summary>
         /// Finds the package manifest.
         /// </summary>
-        private string GetPackageManifestPath(DTE2 dte2Service)
+        private string GetPackageManifestPath()
         {
-            var hierarchy = dte2Service.ToolWindows.SolutionExplorer;
-            var solutionRoot = hierarchy.UIHierarchyItems.Item(1);
-
-            for (var i = 1; i <= solutionRoot.UIHierarchyItems.Count; i++)
+            var item = GetSelectedItem();
+            string path = null;
+            while (path == null && item != null)
             {
-                var uiHierarchyItems = solutionRoot.UIHierarchyItems.Item(i).UIHierarchyItems;
+                path = GetPackageManifestPath(item.Collection);
+                item = item.Collection.Parent as UIHierarchyItem;
+            }
+            return path;
+        }
 
-                foreach (UIHierarchyItem uiHierarchy in uiHierarchyItems)
+        private string GetPackageManifestPath(UIHierarchyItems items)
+        {
+            foreach (var uiHierarchyItem in items)
+            {
+                var typedItem = uiHierarchyItem as UIHierarchyItem;
+                if (typedItem != null && typedItem.Name.ToLower().Equals("package.appxmanifest"))
                 {
-                    if (!uiHierarchy.Name.ToLower().Equals("package.appxmanifest")) continue;
+                    var projectItem = typedItem.Object as ProjectItem;
 
-                    var projectItem = uiHierarchy.Object as ProjectItem;
                     return projectItem?.Properties.Item("FullPath").Value.ToString();
                 }
             }
             return null;
+        }
+
+        public void Dispose()
+        {
+            _project.Save();
+            Cursor.Current = Cursors.Default;
         }
     }
 }

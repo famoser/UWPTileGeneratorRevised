@@ -6,7 +6,8 @@
 
 using System;
 using System.ComponentModel.Design;
-using System.Globalization;
+using Famoser.UWPTileGeneratorRevised.Enums;
+using Famoser.UWPTileGeneratorRevised.Workflow;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
@@ -31,8 +32,12 @@ namespace Famoser.UWPTileGeneratorRevised
         /// Command ID.
         /// </summary>
         public const int GenerateSplashImagesCommandId = 0x300;
+        /// <summary>
+        /// Command ID.
+        /// </summary>
+        public const int GenerateAllCommandId = 0x400;
 
-        
+
 
         /// <summary>
         /// Command menu group (command set GUID).
@@ -42,7 +47,7 @@ namespace Famoser.UWPTileGeneratorRevised
         /// <summary>
         /// VS Package that provides this command, not null.
         /// </summary>
-        private readonly Package package;
+        private readonly Package _package;
 
         /// <summary>
         /// Gets the instance of the command.
@@ -56,7 +61,7 @@ namespace Famoser.UWPTileGeneratorRevised
         /// <summary>
         /// Gets the service provider from the owner package.
         /// </summary>
-        private IServiceProvider ServiceProvider => package;
+        private IServiceProvider ServiceProvider => _package;
 
         /// <summary>
         /// Initializes the singleton instance of the command.
@@ -75,44 +80,73 @@ namespace Famoser.UWPTileGeneratorRevised
         private TileGeneratorCommand(Package package)
         {
             if (package == null)
-            {
-                throw new ArgumentNullException("package");
-            }
+                throw new ArgumentNullException(nameof(package));
 
-            this.package = package;
+            _package = package;
 
-            OleMenuCommandService commandService = this.ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+            OleMenuCommandService commandService = ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if (commandService != null)
             {
-                var menuCommandID = new CommandID(CommandSet, GenerateTileImagesCommandId);
-                var menuItem = new MenuCommand(this.MenuItemCallback, menuCommandID);
+                var menuCommandId = new CommandID(CommandSet, GenerateTileImagesCommandId);
+                var menuItem = new MenuCommand(GenerateTileImagesCommandCallback, menuCommandId);
                 commandService.AddCommand(menuItem);
 
-                menuCommandID = new CommandID(CommandSet, GenerateSplashImagesCommandId);
-                menuItem = new MenuCommand(this.MenuItemCallback2, menuCommandID);
+                menuCommandId = new CommandID(CommandSet, GenerateSplashImagesCommandId);
+                menuItem = new MenuCommand(GenerateSplashImagesCommandCallback, menuCommandId);
                 commandService.AddCommand(menuItem);
 
-                menuCommandID = new CommandID(CommandSet, GenerateStoreLogoCommandId);
-                menuItem = new MenuCommand(this.MenuItemCallback3, menuCommandID);
+                menuCommandId = new CommandID(CommandSet, GenerateStoreLogoCommandId);
+                menuItem = new MenuCommand(GenerateStoreLogoCommandCallback, menuCommandId);
+                commandService.AddCommand(menuItem);
+
+                menuCommandId = new CommandID(CommandSet, GenerateAllCommandId);
+                menuItem = new MenuCommand(GenerateAllCommandCallback, menuCommandId);
                 commandService.AddCommand(menuItem);
             }
         }
 
-        /// <summary>
-        /// This function is the callback used to execute the command when the menu item is clicked.
-        /// See the constructor to see how the menu item is associated with this function using
-        /// OleMenuCommandService service and MenuCommand class.
-        /// </summary>
-        /// <param name="sender">Event sender.</param>
-        /// <param name="e">Event args.</param>
-        private void MenuItemCallback(object sender, EventArgs e)
+        private void GenerateAllCommandCallback(object sender, EventArgs e)
         {
-            string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
-            string title = "TileGeneratorCommand";
+            ExecuteWorkflowSafe(ActionType.GenerateStoreLogo, ActionType.GenerateTileImages, ActionType.GenerateSplashImages);
+        }
 
+        private void GenerateStoreLogoCommandCallback(object sender, EventArgs e)
+        {
+            ExecuteWorkflowSafe(ActionType.GenerateStoreLogo);
+        }
+
+        private void GenerateSplashImagesCommandCallback(object sender, EventArgs e)
+        {
+            ExecuteWorkflowSafe(ActionType.GenerateSplashImages);
+        }
+
+        private void GenerateTileImagesCommandCallback(object sender, EventArgs e)
+        {
+            ExecuteWorkflowSafe(ActionType.GenerateTileImages);
+        }
+        
+        private void ExecuteWorkflowSafe(params ActionType[] actions)
+        {
+            try
+            {
+                foreach (var actionType in actions)
+                {
+                    var workflow = new GenerateTilesWorkflow(ServiceProvider, actionType);
+                    workflow.DoWork();
+                }
+                ShowSuccessMessage();
+            }
+            catch (Exception ex)
+            {
+                ShowMessage("UPW Tile Generator", "ops! something went wrong: " + ex);
+            }
+        }
+
+        private void ShowMessage(string title, string message)
+        {
             // Show a message box to prove we were here
             VsShellUtilities.ShowMessageBox(
-                this.ServiceProvider,
+                ServiceProvider,
                 message,
                 title,
                 OLEMSGICON.OLEMSGICON_INFO,
@@ -120,48 +154,9 @@ namespace Famoser.UWPTileGeneratorRevised
                 OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
         }
 
-        /// <summary>
-        /// This function is the callback used to execute the command when the menu item is clicked.
-        /// See the constructor to see how the menu item is associated with this function using
-        /// OleMenuCommandService service and MenuCommand class.
-        /// </summary>
-        /// <param name="sender">Event sender.</param>
-        /// <param name="e">Event args.</param>
-        private void MenuItemCallback2(object sender, EventArgs e)
+        private void ShowSuccessMessage()
         {
-            string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback2()", this.GetType().FullName);
-            string title = "TileGeneratorCommand";
-
-            // Show a message box to prove we were here
-            VsShellUtilities.ShowMessageBox(
-                this.ServiceProvider,
-                message,
-                title,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
-        }
-
-        /// <summary>
-        /// This function is the callback used to execute the command when the menu item is clicked.
-        /// See the constructor to see how the menu item is associated with this function using
-        /// OleMenuCommandService service and MenuCommand class.
-        /// </summary>
-        /// <param name="sender">Event sender.</param>
-        /// <param name="e">Event args.</param>
-        private void MenuItemCallback3(object sender, EventArgs e)
-        {
-            string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback3()", this.GetType().FullName);
-            string title = "TileGeneratorCommand";
-
-            // Show a message box to prove we were here
-            VsShellUtilities.ShowMessageBox(
-                this.ServiceProvider,
-                message,
-                title,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            ShowMessage("UWP Tile Generation", "Generation finished successfull");
         }
     }
 }

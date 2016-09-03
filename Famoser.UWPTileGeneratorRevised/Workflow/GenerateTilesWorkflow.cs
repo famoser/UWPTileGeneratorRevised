@@ -21,21 +21,18 @@ namespace Famoser.UWPTileGeneratorRevised.Workflow
         private static ConfigurationRoot _config;
         private IVsOutputWindowPane _outputWindow;
         private DTE2 _dte2Service;
-        private string _sourceFileName;
-        private Project _project;
 
         public GenerateTilesWorkflow(IServiceProvider serviceProvider, params ActionType[] actions)
         {
             ResolverServices(serviceProvider);
             ResolveConfig();
             ResolveActions(actions);
-            ResolveSourceFile();
         }
 
         private void ResolverServices(IServiceProvider serviceProvider)
         {
+            _outputWindow = (IVsOutputWindowPane)serviceProvider.GetService(typeof(SVsGeneralOutputWindowPane));
             _outputWindow.OutputString("Resolving services... \n");
-            _outputWindow = serviceProvider.GetService(typeof(SVsGeneralOutputWindowPane)) as IVsOutputWindowPane;
             _dte2Service = (DTE2)serviceProvider.GetService(typeof(DTE));
         }
 
@@ -92,61 +89,60 @@ namespace Famoser.UWPTileGeneratorRevised.Workflow
             }
         }
 
-        private void ResolveSourceFile()
-        {
-            _outputWindow.OutputString("Resolving source file... \n");
+        //private void ResolveSourceFile()
+        //{
+        //    _outputWindow.OutputString("Resolving source file... \n");
             
-            var hierarchy = _dte2Service.ToolWindows.SolutionExplorer;
-            var selectedItems = (Array)hierarchy.SelectedItems;
-            var selectedItem = selectedItems.Length > 0 ? (UIHierarchyItem)selectedItems.GetValue(0) : null;
+        //    var hierarchy = _dte2Service.ToolWindows.SolutionExplorer;
+        //    var selectedItems = (Array)hierarchy.SelectedItems;
+        //    var selectedItem = selectedItems.Length > 0 ? (UIHierarchyItem)selectedItems.GetValue(0) : null;
 
-            if (selectedItem != null)
-            {
-
-                var projectItem = selectedItem.Object as ProjectItem;
-                _sourceFileName = projectItem?.Properties.Item("FullPath").Value.ToString();
-                _project = projectItem?.ContainingProject;
-            }
-        }
+        //    if (selectedItem != null)
+        //    {
+        //        var projectItem = selectedItem.Object as ProjectItem;
+        //        _sourceFileName = projectItem?;
+        //        _project = projectItem?.ContainingProject;
+        //    }
+        //}
 
         public void DoWork()
         {
-            Cursor.Current = Cursors.WaitCursor;
-
-            if (string.IsNullOrEmpty(_sourceFileName))
+            using (var vsHelper = new VisualStudioHelper(_dte2Service))
             {
-                _outputWindow.OutputString("No file selected, aborting... \n");
-            }
-
-            var extension = Path.GetExtension(_sourceFileName);
-            if (extension != "png" && extension != "svg")
-            {
-                _outputWindow.OutputString("Unsupported file selected (only .png & .svg allowed), aborting... \n");
-            }
-
-            _outputWindow.OutputString("Starting generation of images... \n");
-
-            var imageHelper = new ImageHelper(_sourceFileName);
-            var vsHelper = new VisualStudioHelper(_sourceFileName, _dte2Service);
-            foreach (var tile in _tilesToGenerate)
-            {
-                _outputWindow.OutputString("Generating " + tile.XmlName + "... \n");
-                foreach (var scaleFactor in tile.ScaleFactors)
+                var sfn = vsHelper.GetSelectedItemPath();
+                var imageHelper = new ImageHelper(sfn);
+                if (string.IsNullOrEmpty(sfn))
                 {
-                    var savePath = GenerateSavePath(tile, scaleFactor, _sourceFileName);
-                    imageHelper.GenerateFile(tile, scaleFactor, savePath);
-                    vsHelper.AddTileToPackage(tile);
+                    _outputWindow.OutputString("No file selected, aborting... \n");
+                }
+
+                var extension = Path.GetExtension(sfn);
+                if (extension != "png" && extension != "svg")
+                {
+                    _outputWindow.OutputString("Unsupported file selected (only .png & .svg allowed), aborting... \n");
+                }
+
+                _outputWindow.OutputString("Starting generation of images... \n");
+
+
+                foreach (var tile in _tilesToGenerate)
+                {
+                    _outputWindow.OutputString("Generating " + tile.XmlName + "... \n");
+                    foreach (var scaleFactor in tile.ScaleFactors)
+                    {
+                        var savePath = GenerateSavePath(tile, scaleFactor, sfn);
+                        imageHelper.GenerateFile(tile, scaleFactor, savePath);
+                        vsHelper.AddFileToProject(savePath);
+                        vsHelper.AddTileToPackage(tile);
+                    }
                 }
             }
-
             _outputWindow.OutputString("Saving project... \n");
-            _project.Save();
-            Cursor.Current = Cursors.Default;
         }
 
         private string GenerateSavePath(Tile tile, double scaleFactor, string sourceFilePath)
         {
-            var fileName = tile.BaseFileName + "scale-" + scaleFactor * 100 + ".png";
+            var fileName = tile.BaseFileName + ".scale-" + scaleFactor * 100 + ".png";
             return Path.Combine(Path.GetDirectoryName(sourceFilePath), fileName);
         }
     }

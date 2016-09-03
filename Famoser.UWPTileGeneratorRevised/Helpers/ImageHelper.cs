@@ -31,11 +31,12 @@ namespace Famoser.UWPTileGeneratorRevised.Helpers
         public void GenerateFile(Tile tile, double scaleFactor, string savePath)
         {
             var extension = Path.GetExtension(_sourceFilePath);
+            var newSize = new Size((int)Math.Round(tile.Width*scaleFactor,0, MidpointRounding.AwayFromZero), (int)Math.Round(tile.Height*scaleFactor, 0,MidpointRounding.AwayFromZero));
             if (extension == ".png")
             {
                 using (var originalImage = Image.FromFile(_sourceFilePath))
                 {
-                    using (var resizedImage = ResizeImage((Bitmap)originalImage, new Size((int)(tile.Width * scaleFactor), (int)(tile.Height * scaleFactor)), tile.IconWidth, tile.IconHeight))
+                    using (var resizedImage = ResizeImage((Bitmap)originalImage, newSize, tile.IconWidth, tile.IconHeight))
                     {
                         resizedImage.Save(savePath);
                     }
@@ -43,7 +44,7 @@ namespace Famoser.UWPTileGeneratorRevised.Helpers
             }
             else if (extension == ".svg")
             {
-                using (var resizedImage = ResizeImage(SvgDocument.Open(_sourceFilePath), new Size((int)(tile.Width * scaleFactor), (int)(tile.Height * scaleFactor)), tile.IconWidth, tile.IconHeight))
+                using (var resizedImage = ResizeImage(SvgDocument.Open(_sourceFilePath), newSize, tile.IconWidth, tile.IconHeight))
                 {
                     resizedImage.Save(savePath);
                 }

@@ -30,24 +30,31 @@
 
     <!--Buttons section. -->
     <Buttons>
+      <Button guid="guidTileGeneratorCommandPackageCmdSet" id="GenerateAllCommandId" priority="0x0100" type="Button">
+        <Parent guid="guidTileGeneratorCommandPackageCmdSet" id="MySubMenuGroup" />
+        <Strings>
+          <ButtonText>Generate All</ButtonText>
+        </Strings>
+      </Button>
+      
       <Button guid="guidTileGeneratorCommandPackageCmdSet" id="GenerateTileImagesCommandId" priority="0x0100" type="Button">
         <Parent guid="guidTileGeneratorCommandPackageCmdSet" id="MySubMenuGroup" />
         <Strings>
-          <ButtonText>Invoke GenerateTileImagesCommandId</ButtonText>
+          <ButtonText>Generate only tiles</ButtonText>
         </Strings>
       </Button>
 
       <Button guid="guidTileGeneratorCommandPackageCmdSet" id="GenerateStoreLogoCommandId" priority="0x0100" type="Button">
         <Parent guid="guidTileGeneratorCommandPackageCmdSet" id="MySubMenuGroup" />
         <Strings>
-          <ButtonText>Invoke GenerateStoreLogoCommandId</ButtonText>
+          <ButtonText>Generate only store logos</ButtonText>
         </Strings>
       </Button>
 
       <Button guid="guidTileGeneratorCommandPackageCmdSet" id="GenerateSplashImagesCommandId" priority="0x0100" type="Button">
         <Parent guid="guidTileGeneratorCommandPackageCmdSet" id="MySubMenuGroup" />
         <Strings>
-          <ButtonText>Invoke GenerateSplashImagesCommandId</ButtonText>
+          <ButtonText>Generate only splash images</ButtonText>
         </Strings>
       </Button>
     </Buttons>
@@ -65,6 +72,7 @@
       <IDSymbol name="GenerateTileImagesCommandId" value="0x0100" />
       <IDSymbol name="GenerateStoreLogoCommandId" value="0x0200" />
       <IDSymbol name="GenerateSplashImagesCommandId" value="0x300" />
+      <IDSymbol name="GenerateAllCommandId" value="0x400" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>

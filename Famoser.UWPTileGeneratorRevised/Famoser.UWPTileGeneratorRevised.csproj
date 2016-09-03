@@ -61,12 +61,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TileGeneratorCommand.cs" />
     <Compile Include="TileGeneratorCommandPackage.cs" />
-    <Compile Include="TileGeneratorsCommand.cs" />
     <Compile Include="Workflow\GenerateTilesWorkflow.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Assets\tiles.json" />
+    <Content Include="Assets\tiles.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Key.snk" />
     <None Include="packages.config" />
     <None Include="source.extension.vsixmanifest">
@@ -74,9 +75,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\MyTestCommand.png" />
-    <Content Include="Resources\TileGeneratorCommand.png" />
-    <Content Include="Resources\TileGeneratorCommandPackage.ico" />
     <VSCTCompile Include="TileGeneratorCommandPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
       <SubType>Designer</SubType>
@@ -216,6 +214,7 @@
     <EmbeddedResource Include="VSPackage.resx">
       <MergeWithCTO>true</MergeWithCTO>
       <ManifestResourceName>VSPackage</ManifestResourceName>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
