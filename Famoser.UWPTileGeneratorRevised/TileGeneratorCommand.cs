@@ -32,11 +32,6 @@ namespace Famoser.UWPTileGeneratorRevised
         /// </summary>
         public const int GenerateSplashImagesCommandId = 0x300;
 
-        /// <summary>
-        /// Command ID.
-        /// </summary>
-        public const int EmptyCommandId = 0x300;
-
         
 
         /// <summary>
@@ -94,15 +89,11 @@ namespace Famoser.UWPTileGeneratorRevised
                 commandService.AddCommand(menuItem);
 
                 menuCommandID = new CommandID(CommandSet, GenerateSplashImagesCommandId);
-                menuItem = new MenuCommand(this.MenuItemCallback, menuCommandID);
+                menuItem = new MenuCommand(this.MenuItemCallback2, menuCommandID);
                 commandService.AddCommand(menuItem);
 
                 menuCommandID = new CommandID(CommandSet, GenerateStoreLogoCommandId);
-                menuItem = new MenuCommand(this.MenuItemCallback, menuCommandID);
-                commandService.AddCommand(menuItem);
-
-                menuCommandID = new CommandID(CommandSet, EmptyCommandId);
-                menuItem = new MenuCommand((sender, args) => { }, menuCommandID);
+                menuItem = new MenuCommand(this.MenuItemCallback3, menuCommandID);
                 commandService.AddCommand(menuItem);
             }
         }
@@ -117,6 +108,50 @@ namespace Famoser.UWPTileGeneratorRevised
         private void MenuItemCallback(object sender, EventArgs e)
         {
             string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
+            string title = "TileGeneratorCommand";
+
+            // Show a message box to prove we were here
+            VsShellUtilities.ShowMessageBox(
+                this.ServiceProvider,
+                message,
+                title,
+                OLEMSGICON.OLEMSGICON_INFO,
+                OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+        }
+
+        /// <summary>
+        /// This function is the callback used to execute the command when the menu item is clicked.
+        /// See the constructor to see how the menu item is associated with this function using
+        /// OleMenuCommandService service and MenuCommand class.
+        /// </summary>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event args.</param>
+        private void MenuItemCallback2(object sender, EventArgs e)
+        {
+            string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback2()", this.GetType().FullName);
+            string title = "TileGeneratorCommand";
+
+            // Show a message box to prove we were here
+            VsShellUtilities.ShowMessageBox(
+                this.ServiceProvider,
+                message,
+                title,
+                OLEMSGICON.OLEMSGICON_INFO,
+                OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+        }
+
+        /// <summary>
+        /// This function is the callback used to execute the command when the menu item is clicked.
+        /// See the constructor to see how the menu item is associated with this function using
+        /// OleMenuCommandService service and MenuCommand class.
+        /// </summary>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event args.</param>
+        private void MenuItemCallback3(object sender, EventArgs e)
+        {
+            string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback3()", this.GetType().FullName);
             string title = "TileGeneratorCommand";
 
             // Show a message box to prove we were here
