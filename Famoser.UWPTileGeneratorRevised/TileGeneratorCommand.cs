@@ -21,6 +21,11 @@ namespace Famoser.UWPTileGeneratorRevised
         /// <summary>
         /// Command ID.
         /// </summary>
+        public const int GenerateAllCommandId = 0x400;
+
+        /// <summary>
+        /// Command ID.
+        /// </summary>
         public const int GenerateTileImagesCommandId = 0x0100;
 
         /// <summary>
@@ -32,10 +37,21 @@ namespace Famoser.UWPTileGeneratorRevised
         /// Command ID.
         /// </summary>
         public const int GenerateSplashImagesCommandId = 0x300;
+
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int GenerateAllCommandId = 0x400;
+        public const int GenerateColorImagesCommandId = 0x500;
+
+        /// <summary>
+        /// Command ID.
+        /// </summary>
+        public const int GenerateWhiteImagesCommandId = 0x600;
+
+        /// <summary>
+        /// Command ID.
+        /// </summary>
+        public const int ShowHelpCommandId = 0x700;
 
 
 
@@ -102,7 +118,42 @@ namespace Famoser.UWPTileGeneratorRevised
                 menuCommandId = new CommandID(CommandSet, GenerateAllCommandId);
                 menuItem = new MenuCommand(GenerateAllCommandCallback, menuCommandId);
                 commandService.AddCommand(menuItem);
+
+                menuCommandId = new CommandID(CommandSet, GenerateWhiteImagesCommandId);
+                menuItem = new MenuCommand(GenerateWhiteImagesCommandCallback, menuCommandId);
+                commandService.AddCommand(menuItem);
+
+                menuCommandId = new CommandID(CommandSet, GenerateColorImagesCommandId);
+                menuItem = new MenuCommand(GenerateColorImagesCommandCallback, menuCommandId);
+                commandService.AddCommand(menuItem);
+
+                menuCommandId = new CommandID(CommandSet, ShowHelpCommandId);
+                menuItem = new MenuCommand(ShowHelpCommandCallback, menuCommandId);
+                commandService.AddCommand(menuItem);
             }
+        }
+
+        private void ShowHelpCommandCallback(object sender, EventArgs e)
+        {
+            ShowMessage("Help", "Add a .svg or .png file to the project containing the package.manifest file, then this generator will create all images needed for an UWP application. " +
+                                "It even configures your package.manifest accordingly, and adds all new files to your project.\n\n" +
+                                "Make sure your Logo fulfills folowing requirements: \n" +
+                                " - use a quadratic image \n" +
+                                " - the background color of the generated image will be evaluated by looking at the pixel (1,1), so use transparent there if you need it\n" +
+                                " - use little to no padding for your logo\n\n" +
+                                "Recommendations: \n" +
+                                " - the background of your logo should be transparent (for the accent color of your customers)\n" +
+                                " - make your logo foreground white for tiles, and coloured for store & splash screen");
+        }
+
+        private void GenerateColorImagesCommandCallback(object sender, EventArgs e)
+        {
+            ExecuteWorkflowSafe(ActionType.GenerateStoreLogo, ActionType.GenerateSplashImages);
+        }
+
+        private void GenerateWhiteImagesCommandCallback(object sender, EventArgs e)
+        {
+            ExecuteWorkflowSafe(ActionType.GenerateTileImages);
         }
 
         private void GenerateAllCommandCallback(object sender, EventArgs e)

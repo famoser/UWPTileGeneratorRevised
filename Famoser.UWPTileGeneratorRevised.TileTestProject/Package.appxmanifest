@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="Famoser.UWPTileGeneratorRevised.TileTestProject.App">
-      <uap:VisualElements DisplayName="Famoser.UWPTileGeneratorRevised.TileTestProject" Square150x150Logo="Assets\TestImages\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="Famoser.UWPTileGeneratorRevised.TileTestProject" BackgroundColor="transparent">
+      <uap:VisualElements DisplayName="Famoser.UWPTileGeneratorRevised.TileTestProject" Square150x150Logo="Assets\TestImages\Square150x150Logo.png" Square44x44Logo="Assets\TestImages\Square44x44Logo.png" Description="Famoser.UWPTileGeneratorRevised.TileTestProject" BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\TestImages\Wide310x150Logo.png" Square71x71Logo="Assets\TestImages\Square71x71Logo.png" Square310x310Logo="Assets\TestImages\Square310x310Logo.png" />
         <uap:SplashScreen Image="Assets\TestImages\SplashScreen.png" />
       </uap:VisualElements>

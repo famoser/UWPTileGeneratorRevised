@@ -14,7 +14,18 @@
       </Group>
 
       <!-- The group for the items on the MenuController drop-down. It is added to the MenuController submenu. -->
-      <Group guid="guidTileGeneratorCommandPackageCmdSet" id="MySubMenuGroup" priority="0x4000" >
+      <Group guid="guidTileGeneratorCommandPackageCmdSet" id="MySubMenuGroupMain" priority="0x4000" >
+        <Parent guid="guidTileGeneratorCommandPackageCmdSet" id="MyMenuController" />
+      </Group>
+
+      <!-- The group for the items on the MenuController drop-down. It is added to the MenuController submenu. -->
+      <Group guid="guidTileGeneratorCommandPackageCmdSet" id="MySubMenuGroupDetail" priority="0x4000" >
+        <Parent guid="guidTileGeneratorCommandPackageCmdSet" id="MyMenuController" />
+      </Group>
+
+
+      <!-- The group for the items on the MenuController drop-down. It is added to the MenuController submenu. -->
+      <Group guid="guidTileGeneratorCommandPackageCmdSet" id="MySubMenuGroupColor" priority="0x4000" >
         <Parent guid="guidTileGeneratorCommandPackageCmdSet" id="MyMenuController" />
       </Group>
     </Groups>
@@ -31,28 +42,49 @@
     <!--Buttons section. -->
     <Buttons>
       <Button guid="guidTileGeneratorCommandPackageCmdSet" id="GenerateAllCommandId" priority="0x0100" type="Button">
-        <Parent guid="guidTileGeneratorCommandPackageCmdSet" id="MySubMenuGroup" />
+        <Parent guid="guidTileGeneratorCommandPackageCmdSet" id="MySubMenuGroupMain" />
         <Strings>
           <ButtonText>Generate All</ButtonText>
         </Strings>
       </Button>
       
+      <Button guid="guidTileGeneratorCommandPackageCmdSet" id="ShowHelpCommandId" priority="0x0100" type="Button">
+        <Parent guid="guidTileGeneratorCommandPackageCmdSet" id="MySubMenuGroupMain" />
+        <Strings>
+          <ButtonText>Show Help</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidTileGeneratorCommandPackageCmdSet" id="GenerateColorImagesCommandId" priority="0x0100" type="Button">
+        <Parent guid="guidTileGeneratorCommandPackageCmdSet" id="MySubMenuGroupColor" />
+        <Strings>
+          <ButtonText>Generate color tiles</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidTileGeneratorCommandPackageCmdSet" id="GenerateWhiteImagesCommandId" priority="0x0100" type="Button">
+        <Parent guid="guidTileGeneratorCommandPackageCmdSet" id="MySubMenuGroupColor" />
+        <Strings>
+          <ButtonText>Generate white tiles</ButtonText>
+        </Strings>
+      </Button>
+      
       <Button guid="guidTileGeneratorCommandPackageCmdSet" id="GenerateTileImagesCommandId" priority="0x0100" type="Button">
-        <Parent guid="guidTileGeneratorCommandPackageCmdSet" id="MySubMenuGroup" />
+        <Parent guid="guidTileGeneratorCommandPackageCmdSet" id="MySubMenuGroupDetail" />
         <Strings>
           <ButtonText>Generate only tiles</ButtonText>
         </Strings>
       </Button>
 
       <Button guid="guidTileGeneratorCommandPackageCmdSet" id="GenerateStoreLogoCommandId" priority="0x0100" type="Button">
-        <Parent guid="guidTileGeneratorCommandPackageCmdSet" id="MySubMenuGroup" />
+        <Parent guid="guidTileGeneratorCommandPackageCmdSet" id="MySubMenuGroupDetail" />
         <Strings>
           <ButtonText>Generate only store logos</ButtonText>
         </Strings>
       </Button>
 
       <Button guid="guidTileGeneratorCommandPackageCmdSet" id="GenerateSplashImagesCommandId" priority="0x0100" type="Button">
-        <Parent guid="guidTileGeneratorCommandPackageCmdSet" id="MySubMenuGroup" />
+        <Parent guid="guidTileGeneratorCommandPackageCmdSet" id="MySubMenuGroupDetail" />
         <Strings>
           <ButtonText>Generate only splash images</ButtonText>
         </Strings>
@@ -68,10 +100,15 @@
     <GuidSymbol name="guidTileGeneratorCommandPackageCmdSet" value="{145c5f09-ce3c-43f7-9948-18f1ba65f860}">
       <IDSymbol name="MyMenuController" value="0x1010" />
       <IDSymbol name="MyTopMenuGroup" value="0x1020" />
-      <IDSymbol name="MySubMenuGroup" value="0x1030" />
+      <IDSymbol name="MySubMenuGroupMain" value="0x1030" />
+      <IDSymbol name="MySubMenuGroupDetail" value="0x1040" />
+      <IDSymbol name="MySubMenuGroupColor" value="0x1050" />
       <IDSymbol name="GenerateTileImagesCommandId" value="0x0100" />
       <IDSymbol name="GenerateStoreLogoCommandId" value="0x0200" />
       <IDSymbol name="GenerateSplashImagesCommandId" value="0x300" />
+      <IDSymbol name="GenerateColorImagesCommandId" value="0x0500" />
+      <IDSymbol name="GenerateWhiteImagesCommandId" value="0x0600" />
+      <IDSymbol name="ShowHelpCommandId" value="0x0700" />
       <IDSymbol name="GenerateAllCommandId" value="0x400" />
     </GuidSymbol>
   </Symbols>

@@ -52,6 +52,7 @@ namespace Famoser.UWPTileGeneratorRevised.Workflow
             _outputWindow.OutputString("Resolving actions... \n");
             var tileImages = new List<TileSize>()
             {
+                TileSize.AppList,
                 TileSize.Large,
                 TileSize.Medium,
                 TileSize.Small,
