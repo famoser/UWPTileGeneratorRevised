@@ -106,21 +106,38 @@ namespace Famoser.UWPTileGeneratorRevised.Workflow
         //    }
         //}
 
-        public void DoWork()
+        public string GetLastError()
+        {
+            return _lastError;
+        }
+
+        private bool ReturnFailed(string reason)
+        {
+            _lastError = reason;
+            _outputWindow.OutputString(_lastError);
+            return false;
+        }
+
+        private string _lastError;
+        public bool DoWork()
         {
             using (var vsHelper = new VisualStudioHelper(_dte2Service))
             {
+                if (!vsHelper.CanAccessPackageManifest())
+                {
+                    return ReturnFailed("No package manifest found... \n");
+                }
                 var sfn = vsHelper.GetSelectedItemPath();
                 var imageHelper = new ImageHelper(sfn);
                 if (string.IsNullOrEmpty(sfn))
                 {
-                    _outputWindow.OutputString("No file selected, aborting... \n");
+                    return ReturnFailed("No file selected, aborting... \n");
                 }
 
                 var extension = Path.GetExtension(sfn);
                 if (extension != "png" && extension != "svg")
                 {
-                    _outputWindow.OutputString("Unsupported file selected (only .png & .svg allowed), aborting... \n");
+                    return ReturnFailed("Unsupported file selected (only .png & .svg allowed), aborting... \n");
                 }
 
                 _outputWindow.OutputString("Starting generation of images... \n");
@@ -137,8 +154,9 @@ namespace Famoser.UWPTileGeneratorRevised.Workflow
                         vsHelper.AddTileToPackage(tile);
                     }
                 }
+                _outputWindow.OutputString("Saving project... \n");
             }
-            _outputWindow.OutputString("Saving project... \n");
+            return true;
         }
 
         private string GenerateSavePath(Tile tile, double scaleFactor, string sourceFilePath)

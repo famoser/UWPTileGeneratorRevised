@@ -180,12 +180,20 @@ namespace Famoser.UWPTileGeneratorRevised
         {
             try
             {
+                bool hasError = false;
                 foreach (var actionType in actions)
                 {
                     var workflow = new GenerateTilesWorkflow(ServiceProvider, actionType);
-                    workflow.DoWork();
+                    if (!workflow.DoWork())
+                    {
+                        ShowMessage("Error", workflow.GetLastError());
+                        hasError = true;
+                    }
                 }
-                ShowSuccessMessage();
+                if (!hasError)
+                    ShowSuccessMessage();
+                else
+                    ShowMessage("Error", "There was an error generating the images :/");
             }
             catch (Exception ex)
             {
