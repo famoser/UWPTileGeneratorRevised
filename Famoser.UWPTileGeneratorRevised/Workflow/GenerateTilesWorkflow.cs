@@ -135,7 +135,7 @@ namespace Famoser.UWPTileGeneratorRevised.Workflow
                 }
 
                 var extension = Path.GetExtension(sfn);
-                if (extension != "png" && extension != "svg")
+                if (extension != ".png" && extension != ".svg")
                 {
                     return ReturnFailed("Unsupported file selected (only .png & .svg allowed), aborting... \n");
                 }

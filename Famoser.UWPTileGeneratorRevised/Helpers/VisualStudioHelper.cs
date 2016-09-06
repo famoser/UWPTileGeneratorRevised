@@ -32,7 +32,7 @@ namespace Famoser.UWPTileGeneratorRevised.Helpers
             _selectedFilePath = ResolveSelectedFilePath();
             _project = ResolveContainingProject();
             _packageManifestPath = GetPackageManifestPath();
-            if (!string.IsNullOrEmpty(_packageManifestFolder))
+            if (!string.IsNullOrEmpty(_packageManifestPath))
                 _packageManifestFolder = _packageManifestPath.Substring(0, _packageManifestPath.LastIndexOf("\\", StringComparison.Ordinal));
         }
 
