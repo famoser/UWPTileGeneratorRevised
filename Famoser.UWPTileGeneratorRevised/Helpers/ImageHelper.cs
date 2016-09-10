@@ -99,12 +99,12 @@ namespace Famoser.UWPTileGeneratorRevised.Helpers
             var originalWidth = originalImageSize.Width;
             var originalHeight = originalImageSize.Height;
 
-            var percentWidth = requestedSize.Width / (float)originalWidth;
-            var percentHeight = requestedSize.Height / (float)originalHeight;
+            var percentWidth = requestedSize.Width * iconWidth / originalWidth;
+            var percentHeight = requestedSize.Height * iconHeight / originalHeight;
             var percent = percentHeight < percentWidth ? percentHeight : percentWidth;
 
-            var newWidth = (int)(originalWidth * percent * iconWidth);
-            var newHeight = (int)(originalHeight * percent * iconHeight);
+            var newWidth = (int)(originalWidth * percent);
+            var newHeight = (int)(originalHeight * percent);
             
             var xPosition = (requestedSize.Width - newWidth) / 2;
             var yPosition = (requestedSize.Height - newHeight) / 2;
