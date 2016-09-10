@@ -2,15 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using EnvDTE;
 using EnvDTE80;
 using Famoser.UWPTileGeneratorRevised.Enums;
 using Famoser.UWPTileGeneratorRevised.Helpers;
 using Famoser.UWPTileGeneratorRevised.Models.Configuration;
-using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
 namespace Famoser.UWPTileGeneratorRevised.Workflow
