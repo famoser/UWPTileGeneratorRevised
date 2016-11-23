@@ -1,3 +1,7 @@
+# Notice for VS 2017 
+The functionality of this extension is now included
+https://www.visualstudio.com/en-us/news/releasenotes/vs2017-relnotes#manifest-designer-capability-for-creating-visual-assets
+
 # UWP Tile Generator Revised
 
 Generate all UWP tiles needed for your UWP application, on mouse click.
