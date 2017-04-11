@@ -95,13 +95,9 @@ namespace Famoser.UWPTileGeneratorRevised
         /// <param name="package">Owner package, not null.</param>
         private TileGeneratorCommand(Package package)
         {
-            if (package == null)
-                throw new ArgumentNullException(nameof(package));
+            _package = package ?? throw new ArgumentNullException(nameof(package));
 
-            _package = package;
-
-            OleMenuCommandService commandService = ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
-            if (commandService != null)
+            if (ServiceProvider.GetService(typeof(IMenuCommandService)) is OleMenuCommandService commandService)
             {
                 var menuCommandId = new CommandID(CommandSet, GenerateTileImagesCommandId);
                 var menuItem = new MenuCommand(GenerateTileImagesCommandCallback, menuCommandId);
@@ -140,7 +136,7 @@ namespace Famoser.UWPTileGeneratorRevised
                                 "Make sure your Logo fulfills folowing requirements: \n" +
                                 " - use a quadratic image \n" +
                                 " - the background color of the generated image will be evaluated by looking at the pixel (1,1), so use transparent there if you need it\n" +
-                                " - use little to no padding for your logo\n\n" +
+                                " - use little to no padding for your logo (padding is applied automatically) \n\n" +
                                 "Recommendations: \n" +
                                 " - the background of your logo should be transparent (for the accent color of your customers)\n" +
                                 " - make your logo foreground white for tiles, and coloured for store & splash screen");
