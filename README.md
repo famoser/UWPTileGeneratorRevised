@@ -5,7 +5,7 @@ Recommended workflow: 
 
  1. Create a quadratic logo with transparent background which spans the entire artboard.
  2. Save a version with the foreground color of your choice and one with the foreground color white as .svg file. 
- 3. Include the two .svg files into the solution.
+ 3. Include the two .svg files into the UWP project in the Assets folder.
  4. Right-click the colored one and select the menu entry "Generate color tiles".
  5. Right-click the white one and select the menu entry "Generate white tiles".
 
