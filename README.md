@@ -1,6 +1,7 @@
 # UWP Tile Generator Revised
 
-Generate all UWP tiles needed for UWP applications.  
+Generate all UWP tiles needed for UWP applications. You can download the extension from [marketplace.visualstudio.com](https://marketplace.visualstudio.com/items?itemName=FlorianAlexanderMoser.UWPTileGeneratorRevised) or directly within Visual Studio.  
+
 Recommended workflow: 
 
  1. Create a quadratic logo with transparent background which spans the entire artboard.
