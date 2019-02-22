@@ -8,27 +8,11 @@
     <Tags>uwp, tile, splash, generate, generation, generator, windows 10</Tags>
   </Metadata>
   <Installation>
-    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[14.0, 15.0]" />
+    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[14.0, 17.0)" />
   </Installation>
   <Dependencies>
   </Dependencies>
   <Prerequisites>
-    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0,16.0)" DisplayName="Visual Studio core editor" />
+    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0,)" DisplayName="Visual Studio core editor" />
   </Prerequisites>
 </PackageManifest>
-<!--
-    Please add the following element to PackageManifest\\Assets:
-    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
--->
-<!--
-    Please add the following element to PackageManifest\\Dependencies:
-    <Dependency Id="Microsoft.VisualStudio.MPF.14.0" DisplayName="Visual Studio MPF 14.0" d:Source="Installed" Version="[14.0]" />
--->
-<!--
-    Please add the following element to PackageManifest\\Assets:
-    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
--->
-<!--
-    Please add the following element to PackageManifest\\Dependencies:
-    <Dependency Id="Microsoft.VisualStudio.MPF.14.0" DisplayName="Visual Studio MPF 14.0" d:Source="Installed" Version="[14.0]" />
--->
